@@ -1,0 +1,34 @@
+let name: string = "Kevin";
+let age: number | string;
+let hobbies: string[];
+// Tupple
+let role: [number, string];
+role = [5, "5"];
+
+// Type, interface for objects
+type Person = {
+  name: string;
+  age: number;
+  opt?: string;
+};
+
+let person: Person = {
+  name: "Kevin",
+  age: 28,
+};
+
+let lotsOfPeople: Person[];
+
+function printName(name: string) {
+  console.log(name);
+}
+printName("Kevin");
+
+void returns undefined
+let printName: (name: string) => void;
+never returns nothing
+let printName: (name: string) => never;
+
+interface Guy extends Person {
+  profession: string;
+}
