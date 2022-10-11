@@ -1,14 +1,25 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 import styles from "./InputField.module.css";
+
+import { TodoContext } from "../context/TodoContext";
 
 interface Props {
   todo: string;
   setTodo: React.Dispatch<React.SetStateAction<string>>;
-  handleAdd: (e: React.FormEvent) => void;
 }
 
-const InputField: React.FC<Props> = ({ todo, setTodo, handleAdd }) => {
+const InputField: React.FC<Props> = ({ todo, setTodo }) => {
+  const { dispatch } = useContext(TodoContext);
+
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (todo) {
+      dispatch({ type: "add", payload: todo });
+      setTodo("");
+    }
+  };
 
   return (
     <form

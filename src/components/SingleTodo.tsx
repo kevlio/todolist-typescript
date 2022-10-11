@@ -1,41 +1,23 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Todo } from "../model";
 import styles from "./SingleTodo.module.css";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { MdDone } from "react-icons/md";
 
+import { TodoContext } from "../context/TodoContext";
+
 type Props = {
   todo: Todo;
-  todos: Todo[];
-  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
 };
 
-const SingleTodo: React.FC<Props> = ({ todo, todos, setTodos }) => {
+const SingleTodo: React.FC<Props> = ({ todo }) => {
+  const { dispatch } = useContext(TodoContext);
   const [edit, setEdit] = useState<boolean>(false);
   const [editTodo, setEditTodo] = useState<string>(todo.todo);
 
-  console.log(todo);
-
   const handleEdit = (e: React.FormEvent, id: number) => {
     e.preventDefault();
-    setTodos(
-      todos.map((todo) => (todo.id === id ? { ...todo, todo: editTodo } : todo))
-    );
     setEdit(false);
-  };
-  const handleDelete = (id: number) => {
-    setTodos(
-      todos.filter((todo) => {
-        return todo.id !== id;
-      })
-    );
-  };
-  const handleDone = (id: number) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, isDone: !todo.isDone } : todo
-      )
-    );
   };
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -45,7 +27,10 @@ const SingleTodo: React.FC<Props> = ({ todo, todos, setTodos }) => {
   return (
     <form
       className={styles.todos__single}
-      onSubmit={(e) => handleEdit(e, todo.id)}
+      onSubmit={(e) => {
+        dispatch({ type: "edit", id: todo.id, editTodo: editTodo });
+        handleEdit(e, todo.id);
+      }}
     >
       {edit ? (
         <input
@@ -70,10 +55,20 @@ const SingleTodo: React.FC<Props> = ({ todo, todos, setTodos }) => {
         >
           <AiFillEdit />
         </span>
-        <span className={styles.icon} onClick={() => handleDelete(todo.id)}>
+        <span
+          className={styles.icon}
+          onClick={() => {
+            dispatch({ type: "remove", payload: todo.id });
+          }}
+        >
           <AiFillDelete />
         </span>
-        <span className={styles.icon} onClick={() => handleDone(todo.id)}>
+        <span
+          className={styles.icon}
+          onClick={() => {
+            dispatch({ type: "done", payload: todo.id });
+          }}
+        >
           <MdDone />
         </span>
       </div>
